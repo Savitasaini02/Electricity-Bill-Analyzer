@@ -60,7 +60,7 @@ git clone https://github.com/Savitasaini02/Electricity-Bill-Analyzer.git
 
 3. Compile the code:
 ```bash
-g++ main.cpp -o bill
+g++ ElectricityBillAnalyzer.cpp -o bill
 ```
 
 4. Run the program:
