@@ -1,0 +1,8 @@
+# Ignore executable files
+*.exe
+
+# Ignore generated receipt files
+Receipt_*.txt
+
+# Ignore VS Code settings (optional)
+.vscode/
