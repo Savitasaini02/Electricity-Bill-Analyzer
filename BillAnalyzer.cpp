@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 #include<ctime>
-#include<iomanip>
+#include<algorithm>
 using namespace std;
 
 class Customer
@@ -514,20 +514,13 @@ void BillingSystem ::search_by_name()
 }
 void BillingSystem ::sort_by_bill()
 {
-    for (int i = 0; i < customers.size() - 1; i++)
-    {
-        for (int j = i + 1; j < customers.size(); j++)
-        {
-            if (customers[i].getBill() < customers[j].getBill())
-            {
-                swap(customers[i], customers[j]);
-            }
-        }
-    }
+    sort(customers.begin(), customers.end(),[](Customer a , Customer b){
+        return a.getBill() > b.getBill();
+    });
 
-    cout << "Sorted by bill (high to low):\n";
-    for (int i = 0; i < customers.size(); i++)
-        customers[i].display();
+    cout << "\nSorted by bill (high to low):\n";
+    for (Customer &c : customers)
+        c.display();
 }
 void BillingSystem ::usage_analysis()
 {
