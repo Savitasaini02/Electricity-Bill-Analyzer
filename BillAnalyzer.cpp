@@ -195,6 +195,8 @@ public:
     void show_pending();
     void search_by_name();
     void sort_by_bill();
+    void sort_by_name();
+    void sort_by_units();
     void usage_analysis();
     void generate_receipt();
     void display_all();
@@ -239,7 +241,6 @@ void BillingSystem ::LoadFromFile()
         temp.set_Data(id, name, p, c, u, b, paid);
         customers.push_back(temp);
     }
-
     file.close();
 }
 
@@ -504,7 +505,8 @@ void BillingSystem ::search_by_name()
 {
     string name;
     cout << "Enter name: ";
-    cin >> name;
+    cin.ignore();
+    getline(cin,name);
 
     for (Customer &c : customers)
     {
@@ -514,13 +516,37 @@ void BillingSystem ::search_by_name()
 }
 void BillingSystem ::sort_by_bill()
 {
-    sort(customers.begin(), customers.end(),[](Customer a , Customer b){
-        return a.getBill() > b.getBill();
+    sort(customers.begin(), customers.end(),[](const Customer& a , const  Customer& b){
+        return a.getBill() > b.getBill();  //here we are using lambda function as 3rd parameter for sort() to tell slort how to comparer elements...if it returns true means a is placed before b otherwose oppsoite
     });
 
     cout << "\nSorted by bill (high to low):\n";
     for (Customer &c : customers)
         c.display();
+}
+void BillingSystem :: sort_by_name(){
+    sort(customers.begin(),customers.end(),[](const Customer& a,const Customer& b){
+        return a.getName() < b.getName();
+    });
+
+    cout<<"Sorted By Name : "<<endl;
+    for (Customer &c : customers)
+        c.display();
+}
+void BillingSystem::sort_by_units()
+{
+    sort(customers.begin(), customers.end(),
+    [](const Customer& a, const Customer& b)
+    {
+        return a.getUnits() > b.getUnits();
+    });
+
+    cout << "\nSorted By Units Consumed (High to Low):\n";
+
+    for (Customer& c : customers)
+    {
+        c.display();
+    }
 }
 void BillingSystem ::usage_analysis()
 {
@@ -639,11 +665,13 @@ int main()
         cout << "5. Pending Bills\n";
         cout << "6. Search by Name\n";
         cout << "7. Sort by Bill\n";
-        cout << "8. Usage Analysis\n";
-        cout << "9. Generate Receipt\n";
-        cout << "10. Update customer\n";
-        cout << "11. Delete Customer\n";
-        cout << "12. Exit\n";
+        cout << "8. Sort by Name\n";
+        cout << "9. Sort by Units\n";
+        cout << "10. Usage Analysis\n";
+        cout << "11. Generate Receipt\n";
+        cout << "12. Update customer\n";
+        cout << "13. Delete Customer\n";
+        cout << "14. Exit\n";
         cout << "Enter choice: ";
         cin >> choice;
 
@@ -671,18 +699,24 @@ int main()
             system.sort_by_bill();
             break;
         case 8:
-            system.usage_analysis();
+            system.sort_by_name();
             break;
         case 9:
-            system.generate_receipt();
+            system.sort_by_units();
             break;
         case 10:
-            system.update_customer();
+            system.usage_analysis();
             break;
         case 11:
-            system.delete_customer();
+            system.generate_receipt();
             break;
         case 12:
+            system.update_customer();
+            break;
+        case 13:
+            system.delete_customer();
+            break;
+        case 14:
             exit(0);
             break;
         default:
