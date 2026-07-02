@@ -2,8 +2,8 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include<ctime>
-#include<algorithm>
+#include <ctime>
+#include <algorithm>
 using namespace std;
 
 class Customer
@@ -91,29 +91,32 @@ public:
 
     void display()
     {
-        cout << "\n---------------------------------\n";
-        cout << "ID: " << C_id << endl;
-        cout << "Name: " << name << endl;
-        cout << "Units: " << units << endl;
-        cout << "Bill: " << total_bill << endl;
-        cout << "Status: " << (isPaid ? "Paid" : "Unpaid") << endl;
-        cout << "---------------------------------\n";
+        cout << "\n====================================\n";
+        cout << "            CUSTOMER DETAILS          \n";
+        cout << "====================================\n";
+        cout << "ID               : " << C_id << endl;
+        cout << "Name             : " << name << endl;
+        cout << "Previous Reading : " << prev_reading << endl;
+        cout << "Current Reading  : " << curr_reading << endl;
+        cout << "Units            : " << units << endl;
+        cout << "Total Bill       : Rs." << total_bill << endl;
+        cout << "Status           : " << (isPaid ? "Paid" : "Unpaid") << endl;
+        cout << "\n====================================\n";
+       
     }
 
-    
     void writeToFile(ofstream &out)
     {
         out << C_id << " " << name << " "
-        << prev_reading << " " << curr_reading << " "
-        << units << " " << total_bill << " "
-        << isPaid << endl;
+            << prev_reading << " " << curr_reading << " "
+            << units << " " << total_bill << " "
+            << isPaid << endl;
     }
     void generateCustomer_receipt();
-    
 };
-void Customer  :: generateCustomer_receipt()
+void Customer ::generateCustomer_receipt()
 {
-     if (total_bill == 0)
+    if (total_bill == 0)
     {
         cout << "Bill not generated yet!\n";
         return;
@@ -138,7 +141,6 @@ void Customer  :: generateCustomer_receipt()
 
     cout << "\n========================================\n";
 
-
     // Create file name
     string fileName = "Receipt_" + to_string(C_id) + ".txt";
 
@@ -152,7 +154,7 @@ void Customer  :: generateCustomer_receipt()
 
     // Get current date and time
     time_t now = time(0);
-    char* dt = ctime(&now);
+    char *dt = ctime(&now);
 
     // Write to file
     outFile << "====== ELECTRICITY BILL RECEIPT ======\n";
@@ -165,7 +167,7 @@ void Customer  :: generateCustomer_receipt()
     outFile << "Total Bill        : Rs. " << total_bill << endl;
     outFile << "Payment Status    : "
             << (isPaid ? "Paid" : "Pending") << endl;
-            outFile << "\n";
+    outFile << "\n";
     outFile << "========================================\n";
     outFile << "   Thank you for using our service!\n";
     outFile << "========================================\n";
@@ -194,6 +196,7 @@ public:
     void pay_bill();
     void show_pending();
     void search_by_name();
+    void search_by_ID();
     void sort_by_bill();
     void sort_by_name();
     void sort_by_units();
@@ -506,44 +509,72 @@ void BillingSystem ::search_by_name()
     string name;
     cout << "Enter name: ";
     cin.ignore();
-    getline(cin,name);
-
+    getline(cin, name);
+    bool found = false;
     for (Customer &c : customers)
     {
         if (c.getName() == name)
             c.display();
+        found = true;
+        return;
+    }
+    if (!found)
+    {
+        cout << "Customer not Found.\n";
     }
 }
+void BillingSystem ::search_by_ID()
+{
+    int id;
+    cout << "Enter ID : ";
+    cin >> id;
+    bool found = false;
+    for (Customer &c : customers)
+    {
+        if (c.getID() == id)
+        {
+            c.display();
+            found = true;
+            return;
+        }
+    }
+    if (!found)
+    {
+        cout << "Customer not Found.\n";
+    }
+}
+
 void BillingSystem ::sort_by_bill()
 {
-    sort(customers.begin(), customers.end(),[](const Customer& a , const  Customer& b){
-        return a.getBill() > b.getBill();  //here we are using lambda function as 3rd parameter for sort() to tell slort how to comparer elements...if it returns true means a is placed before b otherwose oppsoite
-    });
+    sort(customers.begin(), customers.end(), [](const Customer &a, const Customer &b)
+         {
+             return a.getBill() > b.getBill(); // here we are using lambda function as 3rd parameter for sort() to tell slort how to comparer elements...if it returns true means a is placed before b otherwose oppsoite
+         });
 
     cout << "\nSorted by bill (high to low):\n";
     for (Customer &c : customers)
         c.display();
 }
-void BillingSystem :: sort_by_name(){
-    sort(customers.begin(),customers.end(),[](const Customer& a,const Customer& b){
-        return a.getName() < b.getName();
-    });
+void BillingSystem ::sort_by_name()
+{
+    sort(customers.begin(), customers.end(), [](const Customer &a, const Customer &b)
+         { return a.getName() < b.getName(); });
 
-    cout<<"Sorted By Name : "<<endl;
+    cout << "Sorted By Name : " << endl;
     for (Customer &c : customers)
         c.display();
 }
 void BillingSystem::sort_by_units()
 {
     sort(customers.begin(), customers.end(),
-    [](const Customer& a, const Customer& b)
-    {
-        return a.getUnits() > b.getUnits();
-    });
+         [](const Customer &a, const Customer &b)
+         {
+             return a.getUnits() > b.getUnits();
+         });
 
     cout << "\nSorted By Units Consumed (High to Low):\n";
 
-    for (Customer& c : customers)
+    for (Customer &c : customers)
     {
         c.display();
     }
@@ -600,7 +631,7 @@ void BillingSystem ::usage_analysis()
     float avg_units = (float)totalUnits / customers.size();
     float pendingAmount = totalBillAmount - totalBillCollected;
 
-    cout << "Total Customers       : " << customers.size()<<endl;
+    cout << "Total Customers       : " << customers.size() << endl;
     cout << "Paid Customers        : " << totalPaid << endl;
     cout << "Pending Customers     : " << totalPending << endl
          << endl;
@@ -664,14 +695,15 @@ int main()
         cout << "4. View All\n";
         cout << "5. Pending Bills\n";
         cout << "6. Search by Name\n";
-        cout << "7. Sort by Bill\n";
-        cout << "8. Sort by Name\n";
-        cout << "9. Sort by Units\n";
-        cout << "10. Usage Analysis\n";
-        cout << "11. Generate Receipt\n";
-        cout << "12. Update customer\n";
-        cout << "13. Delete Customer\n";
-        cout << "14. Exit\n";
+        cout << "7. Search by ID\n";
+        cout << "8. Sort by Bill\n";
+        cout << "9. Sort by Name\n";
+        cout << "10. Sort by Units\n";
+        cout << "11. Usage Analysis\n";
+        cout << "12. Generate Receipt\n";
+        cout << "13. Update customer\n";
+        cout << "14. Delete Customer\n";
+        cout << "15. Exit\n";
         cout << "Enter choice: ";
         cin >> choice;
 
@@ -696,27 +728,30 @@ int main()
             system.search_by_name();
             break;
         case 7:
-            system.sort_by_bill();
+            system.search_by_ID();
             break;
         case 8:
-            system.sort_by_name();
+            system.sort_by_bill();
             break;
         case 9:
-            system.sort_by_units();
+            system.sort_by_name();
             break;
         case 10:
-            system.usage_analysis();
+            system.sort_by_units();
             break;
         case 11:
-            system.generate_receipt();
+            system.usage_analysis();
             break;
         case 12:
-            system.update_customer();
+            system.generate_receipt();
             break;
         case 13:
-            system.delete_customer();
+            system.update_customer();
             break;
         case 14:
+            system.delete_customer();
+            break;
+        case 15:
             exit(0);
             break;
         default:
